@@ -1,0 +1,13 @@
+# Ignore everything outside this folder
+/*
+!/bootstrap/
+!*.tf
+!*.sh
+!.gitignore
+!README.md
+
+# Ignore OS/OneDrive junk
+*.tmp
+*.log
+desktop.ini
+Thumbs.db
