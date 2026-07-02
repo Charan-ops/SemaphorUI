@@ -1,28 +1,14 @@
-#!/bin/bash
-
+echo "===== DEBUG ====="
 whoami
-
 echo "HOME=$HOME"
-
 pwd
 
-echo "===== HOME ====="
-ls -la ~
+ls -la $HOME
+ls -la $HOME/.aws || true
 
-echo "===== AWS ====="
-ls -la ~/.aws
+cat $HOME/.aws/config || true
+cat $HOME/.aws/credentials || true
 
-echo "===== AWS Config ====="
-cat ~/.aws/config
+env | grep AWS || true
 
-echo "===== AWS Credentials ====="
-cat ~/.aws/credentials
-
-echo "===== AWS Environment ====="
-env | grep AWS
-
-echo "===== AWS CLI ====="
-aws configure list
-
-echo "===== Terraform ====="
-terraform version
+aws configure list || true
