@@ -76,48 +76,48 @@ apt install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
 
 systemctl enable --now kubelet
-# -------------------------------------------------------------------
-# Wait for master to be reachable (adjust IP as needed)
-# -------------------------------------------------------------------
-until ping -c1 10.0.0.10 &>/dev/null; do sleep 2; done
-# -------------------------------------------------------------------
-# Setup LVM (example assumes /dev/xvdf attached volume)
-# -------------------------------------------------------------------
-disk="/dev/nvme1n1"
-mount_point="/var/lib/kube-data"
-vg_name="k8s-worker-vg"
-lv_name="kube-worker-data"
-lv_path="/dev/$vg_name/$lv_name"
-username="your-non-root-user"  # <-- replace this with actual user
+# # -------------------------------------------------------------------
+# # Wait for master to be reachable (adjust IP as needed)
+# # -------------------------------------------------------------------
+# until ping -c1 10.0.0.10 &>/dev/null; do sleep 2; done
+# # -------------------------------------------------------------------
+# # Setup LVM (example assumes /dev/xvdf attached volume)
+# # -------------------------------------------------------------------
+# disk="/dev/nvme1n1"
+# mount_point="/var/lib/kube-data"
+# vg_name="k8s-worker-vg"
+# lv_name="kube-worker-data"
+# lv_path="/dev/$vg_name/$lv_name"
+# username="your-non-root-user"  # <-- replace this with actual user
 
-if [ -b "$disk" ]; then
-    echo "Using disk $disk for LVM setup"
+# if [ -b "$disk" ]; then
+#     echo "Using disk $disk for LVM setup"
 
-    sudo pvcreate "$disk"
-    sudo vgcreate "$vg_name" "$disk"
-    sudo lvcreate -n "$lv_name" -l 100%FREE "$vg_name"
-    sudo mkfs.ext4 "$lv_path"
+#     sudo pvcreate "$disk"
+#     sudo vgcreate "$vg_name" "$disk"
+#     sudo lvcreate -n "$lv_name" -l 100%FREE "$vg_name"
+#     sudo mkfs.ext4 "$lv_path"
 
-    sudo mkdir -p "$mount_point"
-    echo "$lv_path $mount_point ext4 defaults 0 2" | sudo tee -a /etc/fstab
-    sudo mount -a
+#     sudo mkdir -p "$mount_point"
+#     echo "$lv_path $mount_point ext4 defaults 0 2" | sudo tee -a /etc/fstab
+#     sudo mount -a
 
-    # Change ownership so non-root user can use it
-    sudo chown "$username":"$username" "$mount_point"
+#     # Change ownership so non-root user can use it
+#     sudo chown "$username":"$username" "$mount_point"
 
-    echo "LVM volume mounted at $mount_point and ownership set to $username"
-else
-    echo "No LVM-compatible disk found. Skipping LVM setup."
-fi
-# -------------------------------------------------------------------
-# Install AWS CLI
-# -------------------------------------------------------------------
-apt install -y unzip
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-./aws/install
-# -------------------------------------------------------------------
-# Download and execute the token frm s3 bucket to workernode
-# -------------------------------------------------------------------
-sudo aws s3 cp s3://kubernetes-join-token/kubeadm_join.sh /tmp/kubeadm_join.sh
-sudo bash /tmp/kubeadm_join.sh
+#     echo "LVM volume mounted at $mount_point and ownership set to $username"
+# else
+#     echo "No LVM-compatible disk found. Skipping LVM setup."
+# fi
+# # -------------------------------------------------------------------
+# # Install AWS CLI
+# # -------------------------------------------------------------------
+# apt install -y unzip
+# curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+# unzip awscliv2.zip
+# ./aws/install
+# # -------------------------------------------------------------------
+# # Download and execute the token frm s3 bucket to workernode
+# # -------------------------------------------------------------------
+# sudo aws s3 cp s3://kubernetes-join-token/kubeadm_join.sh /tmp/kubeadm_join.sh
+# sudo bash /tmp/kubeadm_join.sh
