@@ -15,12 +15,12 @@ variable "subnet_cidr" {
     default     = "10.0.0.0/24"
 }
 
-variable "public_key_path" {
-    description = "Path to your public SSH key"
-    type        = string
-    # default     = "C:/Users/017898/Downloads/k8s-key.pub"
-    default     = "~/.ssh/k8s-key.pub"
-}
+# variable "public_key_path" {
+#     description = "Path to your public SSH key"
+#     type        = string
+#     # default     = "C:/Users/017898/Downloads/k8s-key.pub"
+#     default     = "~/.ssh/k8s-key.pub"
+# }
 
 variable "ubuntu_ami_owner" {
     description = "Owner ID for Ubuntu AMIs from Canonical"
@@ -44,6 +44,18 @@ variable "key_name" {
     description = "AWS Key Pair Name"
     type        = string
     default     = "k8s-key"
+}
+
+variable "private_key_file" {
+    description = "Private key filename"
+    type        = string
+    default     = "k8s-key.pem"
+}
+
+variable "public_key_file" {
+    description = "Public key filename"
+    type        = string
+    default     = "k8s-key.pub"
 }
 
 variable "master_private_ip" {

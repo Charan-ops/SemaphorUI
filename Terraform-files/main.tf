@@ -53,10 +53,28 @@ resource "aws_route_table_association" "kubernetes_rta" {
 # -------------------------------------------------------------------
 # Key-pair
 # -------------------------------------------------------------------
+
+resource "tls_private_key" "k8s_key" {
+    algorithm = "RSA"
+    rsa_bits  = 4096
+}
+
+resource "local_file" "private_key" {
+    filename        = "${path.module}/${var.private_key_file}"
+    content         = tls_private_key.k8s_key.private_key_pem
+    file_permission = "0600"
+}
+
+resource "local_file" "public_key" {
+    filename = "${path.module}/${var.public_key_file}"
+    content  = tls_private_key.k8s_key.public_key_openssh
+}
+
 resource "aws_key_pair" "k8s_key" {
-    key_name   = "k8s-key"
+    key_name   = var.key_name
     # public_key = file(var.public_key_path)
-    public_key = file(pathexpand(var.public_key_path))
+    # public_key = file(pathexpand(var.public_key_path))
+    public_key = tls_private_key.k8s_key.public_key_openssh 
 }
 
 # -------------------------------------------------------------------
@@ -173,7 +191,8 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "kubernetes_master" {
     ami                         = data.aws_ami.ubuntu.id
     instance_type               = var.instance_type
-    key_name                    = var.key_name
+    # key_name                    = var.key_name
+    key_name                    = aws_key_pair.k8s_key.key_name
     vpc_security_group_ids      = [aws_security_group.kubernetes_sg.id]
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
@@ -198,7 +217,8 @@ resource "aws_instance" "kubernetes_worker" {
     count                       = var.worker_node_count
     ami                         = data.aws_ami.ubuntu.id
     instance_type               = var.instance_type
-    key_name                    = var.key_name
+    # key_name                    = var.key_name
+    key_name                    = aws_key_pair.k8s_key.key_name
     vpc_security_group_ids      = [aws_security_group.kubernetes_sg.id]
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
