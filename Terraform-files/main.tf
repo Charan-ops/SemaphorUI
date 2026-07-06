@@ -191,8 +191,8 @@ data "aws_ami" "ubuntu" {
 resource "aws_instance" "kubernetes_master" {
     ami                         = data.aws_ami.ubuntu.id
     instance_type               = var.instance_type
-    # key_name                    = var.key_name
-    key_name                    = aws_key_pair.k8s_key.key_name
+    key_name                    = var.key_name
+    # key_name                    = aws_key_pair.k8s_key.key_name
     vpc_security_group_ids      = [aws_security_group.kubernetes_sg.id]
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
@@ -217,8 +217,8 @@ resource "aws_instance" "kubernetes_worker" {
     count                       = var.worker_node_count
     ami                         = data.aws_ami.ubuntu.id
     instance_type               = var.instance_type
-    # key_name                    = var.key_name
-    key_name                    = aws_key_pair.k8s_key.key_name
+    key_name                    = var.key_name
+    # key_name                    = aws_key_pair.k8s_key.key_name
     vpc_security_group_ids      = [aws_security_group.kubernetes_sg.id]
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
