@@ -197,7 +197,7 @@ resource "aws_instance" "kubernetes_master" {
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
     private_ip                  = var.master_private_ip
-    iam_instance_profile        = aws_iam_instance_profile.k8s-profile.name
+    # iam_instance_profile        = aws_iam_instance_profile.k8s-profile.name
     user_data                   = file("${path.module}/bootstrap/master-setup.sh")
 
     root_block_device {
@@ -223,7 +223,7 @@ resource "aws_instance" "kubernetes_worker" {
     subnet_id                   = aws_subnet.kubernetes_subnet.id
     associate_public_ip_address = true
     private_ip                  = var.worker_ips[count.index]
-    iam_instance_profile        = aws_iam_instance_profile.k8s-profile.name
+    # iam_instance_profile        = aws_iam_instance_profile.k8s-profile.name
     user_data                   = templatefile("${path.module}/bootstrap/worker-setup.sh", {
         worker_id               = count.index + 1
         worker_private_ip       = var.worker_ips[count.index]
