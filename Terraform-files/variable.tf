@@ -19,7 +19,7 @@ variable "public_key_path" {
     description = "Path to your public SSH key"
     type        = string
     # default     = "C:/Users/017898/Downloads/k8s-key.pub"
-    default     = "$HOME/.ssh/k8s-key.pub"
+    default     = "~/.ssh/k8s-key.pub"
 }
 
 variable "ubuntu_ami_owner" {
